@@ -9,8 +9,6 @@ public enum ResultCode {
     FAILED(1201, "FAILED", "Something went wrong. Please try after sometime"),
     BAD_REQUEST(1300, "BAD REQUEST", "The request is invalid or malformed"),
     NOT_FOUND(1301, "NOT FOUND", "The requested resource was not found"),
-    UNAUTHORIZED(1302, "UNAUTHORIZED", "Access is denied due to invalid credentials"),
-    FORBIDDEN(1303, "FORBIDDEN", "You do not have permission to access this resource"),
     FILE_MISSING(1304, "FILE MISSING", "Required file part is missing in the request"),
     INVALID_FILE_TYPE(1305, "INVALID FILE TYPE", "Uploaded file type is not supported"),
     INTERNAL_SERVER_ERROR(1500, "INTERNAL SERVER ERROR", "An unexpected error occurred on the server"),
