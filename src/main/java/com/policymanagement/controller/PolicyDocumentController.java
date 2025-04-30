@@ -4,18 +4,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.policymanagement.config.JwtUtil;
 import com.policymanagement.enumuration.ResultCode;
 import com.policymanagement.exceptionHandler.PolicyManagementException;
+import com.policymanagement.helper.ServiceHelper;
 import com.policymanagement.requestDto.PolicyDocumentRequestDto;
 import com.policymanagement.responseDto.ApiResponse;
 import com.policymanagement.responseDto.PolicyDocumentResponseDto;
@@ -26,14 +28,20 @@ import com.policymanagement.service.PolicyDocumentService;
 @RequestMapping("/api/documents")
 public class PolicyDocumentController {
 
-	@Autowired
-	private PolicyDocumentService service;
+	private final PolicyDocumentService service;
+	private final ServiceHelper serviceHelper;
+
+	public PolicyDocumentController(PolicyDocumentService service, ServiceHelper serviceHelper) {
+		this.service = service;
+		this.serviceHelper = serviceHelper;
+	}
 
 	@PostMapping("/upload")
-	public ResponseEntity<ApiResponse> uploadDocument(@RequestParam("file") MultipartFile file,
-			@RequestParam("title") String title, @RequestParam("author") String author,
-			@RequestParam("type") String type) {
+	public ResponseEntity<ApiResponse> uploadDocument(@RequestHeader("Authorization") String authToken,
+			@RequestParam("file") MultipartFile file, @RequestParam("title") String title,
+			@RequestParam("author") String author, @RequestParam("type") String type) {
 		try {
+			JwtUtil.verifyToken(serviceHelper.extractToken(authToken));
 			if (Objects.isNull(file) || file.isEmpty()) {
 				throw new PolicyManagementException(ResultCode.FILE_MISSING);
 			}
@@ -63,8 +71,10 @@ public class PolicyDocumentController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<ApiResponse> search(@RequestParam String query) {
+	public ResponseEntity<ApiResponse> search(@RequestParam String query,
+			@RequestHeader("Authorization") String authToken) {
 		try {
+			JwtUtil.verifyToken(serviceHelper.extractToken(authToken));
 			if (Objects.isNull(query) || query.trim().isEmpty()) {
 				throw new PolicyManagementException(ResultCode.BAD_REQUEST);
 			}
@@ -88,8 +98,10 @@ public class PolicyDocumentController {
 
 	@GetMapping("/filter")
 	public ResponseEntity<ApiResponse> filter(@RequestParam String author, @RequestParam String type,
-			@RequestParam int page, @RequestParam int size) {
+			@RequestParam int page, @RequestParam int size, @RequestHeader("Authorization") String authToken) {
 		try {
+			JwtUtil.verifyToken(serviceHelper.extractToken(authToken));
+
 			List<PolicyDocumentResponseDto> filteredDocs = service.filterDocuments(author, type, page, size);
 
 			if (CollectionUtils.isEmpty(filteredDocs)) {

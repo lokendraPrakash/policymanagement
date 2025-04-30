@@ -26,6 +26,7 @@ import com.policymanagement.repository.PolicyDocumentRepository;
 import com.policymanagement.requestDto.PolicyDocumentRequestDto;
 import com.policymanagement.responseDto.PolicyDocumentResponseDto;
 import com.policymanagement.responseDto.QnaSearchResponseDto;
+import com.policymanagement.serviceimpl.PolicyDocumentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyDocumentServiceImplTest {

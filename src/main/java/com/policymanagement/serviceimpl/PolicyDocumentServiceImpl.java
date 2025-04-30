@@ -1,15 +1,13 @@
-package com.policymanagement.serviceImpl;
+package com.policymanagement.serviceimpl;
 
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,8 +25,11 @@ import com.policymanagement.service.PolicyDocumentService;
 @Service
 public class PolicyDocumentServiceImpl implements PolicyDocumentService {
 
-	@Autowired
-	private PolicyDocumentRepository repository;
+	private final PolicyDocumentRepository repository;
+
+	public PolicyDocumentServiceImpl(PolicyDocumentRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public PolicyDocumentResponseDto uploadDocument(MultipartFile file, PolicyDocumentRequestDto metadata)
@@ -72,7 +73,7 @@ public class PolicyDocumentServiceImpl implements PolicyDocumentService {
 		List<PolicyDocument> docs = repository.searchByKeyword(query);
 
 		return docs.stream().map(doc -> QnaSearchResponseDto.builder().title(doc.getTitle())
-				.snippet(getSnippet(doc.getContent(), query)).build()).collect(Collectors.toList());
+				.snippet(getSnippet(doc.getContent(), query)).build()).toList();
 	}
 
 	private String getSnippet(String content, String keyword) {
@@ -88,7 +89,7 @@ public class PolicyDocumentServiceImpl implements PolicyDocumentService {
 	public List<PolicyDocumentResponseDto> filterDocuments(String author, String type, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return repository.findByAuthorContainingIgnoreCaseAndTypeContainingIgnoreCase(author, type, pageable).stream()
-				.map(this::mapToPolicyDto).collect(Collectors.toList());
+				.map(this::mapToPolicyDto).toList();
 	}
 
 	private PolicyDocumentResponseDto mapToPolicyDto(PolicyDocument doc) {

@@ -15,6 +15,7 @@ public enum ResultCode {
     FILE_READ_ERROR(1302, "FILE READ ERROR", "Unable to read the file"),
     FILTER_RESULT_NOT_FOUND(1401, "FILTER RESULT NOT FOUND", "No documents found matching the filter criteria"),
     FILE_SIZE_EXCEEDED(1301, "FILE SIZE EXCEEDED", "Uploaded file size exceeds the allowed limit"),
+    UNAUTHORIZED(1302, "UNAUTHORIZED USER", "Authorization is required or failed"),
 ;
 
     private final int code;
